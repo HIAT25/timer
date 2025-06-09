@@ -14,32 +14,38 @@
       background: #f0f0f0;
       margin: 0;
     }
+    img {
+        max-width: 400px;
+        height: auto;
+        margin-bottom: 20px;
+    }
     #time {
-      font-size: 48px;
-      margin: 20px;
+      font-size: clamp(48px, 40vw, 360px);
+      margin: 30px;
     }
     input[type="number"] {
-      width: 60px;
+      width: 100px;
       padding: 5px;
-      font-size: 18px;
+      font-size: 24px;
       text-align: center;
     }
     button {
       padding: 10px 20px;
       margin: 5px;
-      font-size: 16px;
+      font-size: 18px;
       cursor: pointer;
     }
   </style>
 </head>
 <body>
 
+  <img src="resources/hiat25-logo.png" alt="HIAT'25 Logo" width=>
   <label>
-    Set time (min): 
-    <input id="timeInput" type="number" min="1" max="999" value="5">
+    Set Time in Minute:
+    <input id="timeInput" type="number" min="1" max="59" value="10">
   </label>
 
-  <div id="time">00:05:00</div>
+  <div id="time">10:00</div>
 
   <div>
     <button onclick="startTimer()">Start</button>
@@ -53,12 +59,13 @@
     let timerInterval = null;
     let running = false;
 
+    const input_elem = document.getElementById("timeInput");
+
     function format(ms) {
       const totalSeconds = Math.floor(ms / 1000);
-      const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
-      const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+      const m = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
       const s = String(totalSeconds % 60).padStart(2, '0');
-      return `${h}:${m}:${s}`;
+      return `${m}:${s}`;
     }
 
     function updateDisplay() {
@@ -69,6 +76,7 @@
       if (remaining <= 0) {
         clearInterval(timerInterval);
         running = false;
+        input_elm.disabled = false;
         alert("Time's up!");
         return;
       }
@@ -79,11 +87,12 @@
     function startTimer() {
       if (running) return;
       if (remaining <= 0) {
-        const minutes = parseInt(document.getElementById('timeInput').value);
+        const minutes = parseInt(input_elem);
         duration = minutes * 60 * 1000;
         remaining = duration;
       }
       running = true;
+      input_elem.disabled = true;
       updateDisplay();
       timerInterval = setInterval(tick, 1000);
     }
@@ -91,22 +100,33 @@
     function pauseTimer() {
       if (!running) return;
       running = false;
+      input_elem.disabled = false;
       clearInterval(timerInterval);
     }
 
     function stopTimer() {
       running = false;
+      input_elem.disabled = false;
       clearInterval(timerInterval);
       remaining = 0;
       duration = 0;
       updateDisplay();
     }
 
+    input_elem.addEventListener("input", () => {
+      if (!running) {
+          const minutes = parseInt(input_elem.value || '0');
+          remaining = minutes * 60 * 1000;
+          updateDisplay();
+      }
+    });
+
     // Set initial display based on default input
-    window.onload = () => {
-      const initMinutes = parseInt(document.getElementById('timeInput').value);
+    window.onload = function () {
+      const initMinutes = parseInt(input_elem.value);
       remaining = initMinutes * 60 * 1000;
       updateDisplay();
+
     };
   </script>
 </body>
