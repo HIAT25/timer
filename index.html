@@ -17,11 +17,11 @@
     img {
         max-width: 400px;
         height: auto;
-        margin-bottom: 20px;
+        margin-bottom: 0px;
     }
     #time {
       font-size: clamp(48px, 40vw, 360px);
-      margin: 30px;
+      margin: 10px;
     }
     input[type="number"] {
       width: 100px;
@@ -34,16 +34,37 @@
       margin: 5px;
       font-size: 18px;
       cursor: pointer;
+      text-align: center;
+    }
+    #btnSet20, #btnSet30 {
+      padding: 5px 10px;
+      margin: 2px;
+      font-size: 14px;
+      cursor: pointer;
+      text-align: center;
+    }
+    .container {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      gap: 0.5em;
+      margin: 5px;
     }
   </style>
 </head>
 <body>
 
   <img src="resources/hiat25-logo.png" alt="HIAT'25 Logo" width=>
-  <label>
-    Set Time in Minute:
-    <input id="timeInput" type="number" min="1" max="59" value="10">
-  </label>
+  <div class="container">
+    <label>
+      Set Time in Minute:
+      <input id="timeInput" type="number" min="1" max="59" value="10">
+    </label>
+    <button id="btnSet20" onclick="setTimeInput(20)">20m</button>
+    <button id="btnSet30" onclick="setTimeInput(30)">30m</button>
+  </div>
 
   <div id="time">10:00</div>
 
@@ -59,13 +80,20 @@
     let timerInterval = null;
     let running = false;
 
-    const input_elem = document.getElementById("timeInput");
+    const timeInputElem = document.getElementById("timeInput");
+    const btnSet20Elem = document.getElementById("btnSet20");
+    const btnSet30Elem = document.getElementById("btnSet30");
 
     function format(ms) {
       const totalSeconds = Math.floor(ms / 1000);
       const m = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
       const s = String(totalSeconds % 60).padStart(2, '0');
       return `${m}:${s}`;
+    }
+
+    function setTimeInput(nmins) {
+      timeInputElem.value = nmins;
+      timeInputElem.dispatchEvent(new Event('input', { bubbles: true }));
     }
 
     function updateDisplay() {
@@ -76,7 +104,9 @@
       if (remaining <= 0) {
         clearInterval(timerInterval);
         running = false;
-        input_elm.disabled = false;
+        timeInputElem.disabled = false;
+        btnSet20Elem.disabled = false;
+        btnSet30Elem.disabled = false;
         alert("Time's up!");
         return;
       }
@@ -87,12 +117,14 @@
     function startTimer() {
       if (running) return;
       if (remaining <= 0) {
-        const minutes = parseInt(input_elem);
+        const minutes = parseInt(timeInputElem);
         duration = minutes * 60 * 1000;
         remaining = duration;
       }
       running = true;
-      input_elem.disabled = true;
+      timeInputElem.disabled = true;
+      btnSet20Elem.disabled = true;
+      btnSet30Elem.disabled = true;
       updateDisplay();
       timerInterval = setInterval(tick, 1000);
     }
@@ -100,22 +132,26 @@
     function pauseTimer() {
       if (!running) return;
       running = false;
-      input_elem.disabled = false;
+      timeInputElem.disabled = false;
+      btnSet20Elem.disabled = false;
+      btnSet30Elem.disabled = false;
       clearInterval(timerInterval);
     }
 
     function stopTimer() {
       running = false;
-      input_elem.disabled = false;
+      timeInputElem.disabled = false;
+      btnSet20Elem.disabled = false;
+      btnSet30Elem.disabled = false;
       clearInterval(timerInterval);
       remaining = 0;
       duration = 0;
       updateDisplay();
     }
 
-    input_elem.addEventListener("input", () => {
+    timeInputElem.addEventListener("input", () => {
       if (!running) {
-          const minutes = parseInt(input_elem.value || '0');
+          const minutes = parseInt(timeInputElem.value || '0');
           remaining = minutes * 60 * 1000;
           updateDisplay();
       }
@@ -123,7 +159,7 @@
 
     // Set initial display based on default input
     window.onload = function () {
-      const initMinutes = parseInt(input_elem.value);
+      const initMinutes = parseInt(timeInputElem.value);
       remaining = initMinutes * 60 * 1000;
       updateDisplay();
 
