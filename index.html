@@ -24,17 +24,21 @@
       margin: 10px;
     }
     input[type="number"] {
-      width: 100px;
+      width: 50px;
       padding: 5px;
-      font-size: 24px;
+      font-size: 14px;
       text-align: center;
     }
     button {
-      padding: 10px 20px;
+      padding: 8px 15px;
       margin: 5px;
-      font-size: 18px;
+      font-size: 16px;
       cursor: pointer;
       text-align: center;
+      color: #BDC3C7;
+      background-color: #2C3E50;
+      border: none;
+      border-radius: 4px;
     }
     #btnSet20, #btnSet30 {
       padding: 5px 10px;
@@ -42,6 +46,10 @@
       font-size: 14px;
       cursor: pointer;
       text-align: center;
+      color: #BDC3C7;
+      background-color: #2C3E50;
+      border: none;
+      border-radius: 4px;
     }
     .container {
       display: flex;
@@ -52,8 +60,11 @@
       gap: 0.5em;
       margin: 5px;
     }
-    .time-normal {
+    .time-init {
       color: #000000; /* Black */
+    }
+    .time-normal {
+      color: #ECF0F1; /* Clouds */
     }
     .time-minor {
       color: #D35400;  /* Pumpkin */
@@ -65,7 +76,7 @@
 </head>
 <body>
 
-  <img src="resources/hiat25-logo.png" alt="HIAT'25 Logo" width=>
+  <img id="logo" src="resources/hiat25-logo.png" alt="HIAT'25 Logo" width=>
   <div class="container">
     <label>
       Set Time in Minute:
@@ -98,6 +109,20 @@
     const btnSet20Elem = document.getElementById("btnSet20");
     const btnSet30Elem = document.getElementById("btnSet30");
 
+    function resetPageStyle() {
+    // Page style when timer is initialized, stopped. 
+      document.body.style.backgroundColor = "#f0f0f0";
+      document.getElementById("logo").src = "resources/hiat25-logo.png";
+      timeLabelElem.classList.remove("time-init", "time-normal", "time-minor", "time-major");
+      timeLabelElem.classList.add("time-init");
+    }
+
+    function dimPageStyle() {
+    // Page style when timer is started.
+      document.body.style.backgroundColor = "#212121";
+      document.getElementById("logo").src = "resources/hiat25-logo_gray.png";
+    }
+
     function getWarnTime(t_min) {
       // show minor warning color passing minutes elapsed
       const warnTimeMap = {
@@ -111,7 +136,6 @@
       } else {
         warnT = Math.round(t_min * 0.8 * 60 * 1000);
       }
-      // console.log("Warn time [ms]: ", warnT, "[s]", warnT / 1000, "[m]", warnT / 1000 / 60);
       return warnT;
     }
 
@@ -135,8 +159,7 @@
 
     function updateDisplay() {
       timeLabelElem.textContent = format(remaining);
-      // console.log("Time elapsed: ", (duration - remaining) / 60, "[s]",  "Warn [s]", warnTimeMs / 1000);
-      timeLabelElem.classList.remove("time-normal", "time-minor", "time-major")
+      timeLabelElem.classList.remove("time-normal", "time-minor", "time-major");
       if (remaining < 0) {
         timeLabelElem.classList.add("time-major");
       } else if (duration - remaining >= warnTimeMs) {
@@ -169,7 +192,6 @@
         duration = minutes * 60 * 1000;
         remaining = minutes * 60 * 1000
         warnTimeMs = getWarnTime(minutes);
-        // console.log(duration, remaining, warnTimeMs);
       }
       running = true;
       timeInputElem.disabled = true;
@@ -177,6 +199,8 @@
       btnSet30Elem.disabled = true;
       updateDisplay();
       timerInterval = setInterval(tick, 1000);
+      // change the background
+      dimPageStyle();
     }
 
     function pauseTimer() {
@@ -197,6 +221,7 @@
       remaining = 0;
       duration = 0;
       updateDisplay();
+      resetPageStyle();
     }
 
     timeInputElem.addEventListener("input", () => {
@@ -206,6 +231,7 @@
           remaining = minutes * 60 * 1000;
           warnTimeMs = getWarnTime(minutes);
           updateDisplay();
+          resetPageStyle();
       }
     });
 
@@ -216,7 +242,7 @@
       remaining = initMinutes * 60 * 1000;
       warnTimeMs = getWarnTime(initMinutes);
       updateDisplay();
-
+      resetPageStyle();
     };
   </script>
 </body>
