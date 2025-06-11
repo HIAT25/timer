@@ -52,6 +52,15 @@
       gap: 0.5em;
       margin: 5px;
     }
+    .time-normal {
+      color: #000000; /* Black */
+    }
+    .time-minor {
+      color: #D35400;  /* Pumpkin */
+    }
+    .time-major {
+      color: #C0392B; /* Pomegranate */
+    }
   </style>
 </head>
 <body>
@@ -79,16 +88,44 @@
     let remaining = 0;
     let timerInterval = null;
     let running = false;
+    let warnTimeMs = 0;
 
+    // continue the timer acrossing 0 if set.
+    const allowOverTick = true;
+
+    const timeLabelElem = document.getElementById("time");
     const timeInputElem = document.getElementById("timeInput");
     const btnSet20Elem = document.getElementById("btnSet20");
     const btnSet30Elem = document.getElementById("btnSet30");
 
+    function getWarnTime(t_min) {
+      // show minor warning color passing minutes elapsed
+      const warnTimeMap = {
+        20: 17,
+        30: 25,
+      };
+
+      let warnT;
+      if (t_min in warnTimeMap) {
+        warnT = warnTimeMap[t_min] * 60 * 1000;
+      } else {
+        warnT = Math.round(t_min * 0.8 * 60 * 1000);
+      }
+      // console.log("Warn time [ms]: ", warnT, "[s]", warnT / 1000, "[m]", warnT / 1000 / 60);
+      return warnT;
+    }
+
     function format(ms) {
+      if (ms < 0) {
+        sign = "-";
+        ms = -ms
+      } else {
+        sign = "";
+      }
       const totalSeconds = Math.floor(ms / 1000);
       const m = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
       const s = String(totalSeconds % 60).padStart(2, '0');
-      return `${m}:${s}`;
+      return `${sign}${m}:${s}`;
     }
 
     function setTimeInput(nmins) {
@@ -97,18 +134,29 @@
     }
 
     function updateDisplay() {
-      document.getElementById('time').textContent = format(remaining);
+      timeLabelElem.textContent = format(remaining);
+      // console.log("Time elapsed: ", (duration - remaining) / 60, "[s]",  "Warn [s]", warnTimeMs / 1000);
+      timeLabelElem.classList.remove("time-normal", "time-minor", "time-major")
+      if (remaining < 0) {
+        timeLabelElem.classList.add("time-major");
+      } else if (duration - remaining >= warnTimeMs) {
+        timeLabelElem.classList.add("time-minor");
+      } else {
+        timeLabelElem.classList.add("time-normal");
+      }
     }
 
     function tick() {
-      if (remaining <= 0) {
-        clearInterval(timerInterval);
-        running = false;
-        timeInputElem.disabled = false;
-        btnSet20Elem.disabled = false;
-        btnSet30Elem.disabled = false;
-        alert("Time's up!");
-        return;
+      if (!allowOverTick) {
+        if (remaining <= 0) {
+          clearInterval(timerInterval);
+          running = false;
+          timeInputElem.disabled = false;
+          btnSet20Elem.disabled = false;
+          btnSet30Elem.disabled = false;
+          alert("Time's up!");
+          return;
+        }
       }
       remaining -= 1000;
       updateDisplay();
@@ -117,9 +165,11 @@
     function startTimer() {
       if (running) return;
       if (remaining <= 0) {
-        const minutes = parseInt(timeInputElem);
+        const minutes = parseInt(timeInputElem.value);
         duration = minutes * 60 * 1000;
-        remaining = duration;
+        remaining = minutes * 60 * 1000
+        warnTimeMs = getWarnTime(minutes);
+        // console.log(duration, remaining, warnTimeMs);
       }
       running = true;
       timeInputElem.disabled = true;
@@ -152,7 +202,9 @@
     timeInputElem.addEventListener("input", () => {
       if (!running) {
           const minutes = parseInt(timeInputElem.value || '0');
+          duration = minutes * 60 * 1000;
           remaining = minutes * 60 * 1000;
+          warnTimeMs = getWarnTime(minutes);
           updateDisplay();
       }
     });
@@ -160,7 +212,9 @@
     // Set initial display based on default input
     window.onload = function () {
       const initMinutes = parseInt(timeInputElem.value);
+      duration = initMinutes * 60 * 1000;
       remaining = initMinutes * 60 * 1000;
+      warnTimeMs = getWarnTime(initMinutes);
       updateDisplay();
 
     };
