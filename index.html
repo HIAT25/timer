@@ -72,6 +72,21 @@
     .time-major {
       /* color: #C0392B; Pomegranate */
       color: #DD2C00; /* Red */
+      padding: 4px 8px;
+      border: 2px solid #ff6666;
+      border-radius: 3px;
+      animation: blinkOpacity 1.5s infinite, blinkBorder 1.5s infinite;
+    }
+    /* Slight opacity blink */
+    @keyframes blinkOpacity {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.4; }
+    }
+
+    /* Border blink (color change) */
+    @keyframes blinkBorder {
+      0%, 100% { border-color: #ff6666; }
+      50%      { border-color: #ffcccc; }
     }
   </style>
 </head>
@@ -142,7 +157,7 @@
 
     function format(ms) {
       if (ms < 0) {
-        sign = "⚠️";
+        sign = "";
         ms = -ms
       } else {
         sign = "";
