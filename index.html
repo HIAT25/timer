@@ -21,7 +21,6 @@
     }
     #time {
       font-size: clamp(4em, 45vw, 36em);
-      font-family: monospace;
       margin: 5px;
     }
     input[type="number"] {
@@ -74,18 +73,12 @@
     .time-major {
       /* color: #C0392B; Pomegranate */
       color: #DD2C00; /* Red */
-      animation: blinkOpacity 1.5s infinite, blinkBorder 1.5s infinite;
+      animation: blinkOpacity 1.5s infinite;
     }
     /* Slight opacity blink */
     @keyframes blinkOpacity {
       0%, 100% { opacity: 1; }
       50%      { opacity: 0.4; }
-    }
-
-    /* Border blink (color change) */
-    @keyframes blinkBorder {
-      0%, 100% { border-color: #ff6666; }
-      50%      { border-color: #ffcccc; }
     }
   </style>
 </head>
