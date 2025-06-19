@@ -8,25 +8,28 @@
   <style>
     body {
       font-family: sans-serif;
+      justify-content: center;
+      background: #BDC3C7;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      height: 100vh;
-      background: #BDC3C7;
-      margin: 0;
-      gap: 3rem;
+      padding: 16px;
+      gap: 1rem;
     }
     img {
-        max-width: 600px;
-        height: auto;
-        margin-bottom: 0px;
+        display: block;
+        max-width: 500px;
+        margin: 8px auto 16px auto;
     }
     #time {
-      font-size: clamp(4em, 95vw, 60em);
+      font-size: clamp(4em, 85vw, 52em);
       font-family: 'JetBrains Mono', monospace;
       font-weight: bold;
-      margin: 0px;
+      margin: 8px;
       box-shadow: 0 2px 8px 4px rgba(0, 0, 0, 0.2);
       text-shadow: 2px 2px 4px rgba(0.9, 0.9, 0.9, 0.5);
     }
@@ -35,13 +38,13 @@
       gap: 4rem;
       justify-content: center;
       padding: 1rem;
+      margin-bottom: 1rem;
     }
     .button-row button,
     .button-row input {
       flex: 1;
       padding: 1rem;
-      margin: 5px;
-      width: 5em;
+      width: 4em;
       font-size: 4em;
       cursor: pointer;
       text-align: center;
@@ -49,6 +52,12 @@
       background-color: #546E7A;
       border: none;
       border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input.timeInput::focus {
+      border-color: #007bff;
+      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
     }
     .time-init {
       color: #000000; /* Black */
@@ -71,24 +80,25 @@
   </style>
 </head>
 <body>
+    <div class="container">
+      <img id="logo" src="resources/hiat25-logo.png" alt="HIAT'25 Logo" >
+      <div id="time">20:00</div>
 
-  <img id="logo" src="resources/hiat25-logo.png" alt="HIAT'25 Logo"/>
-  <div id="time">10:00</div>
-
-  <div class="button-row">
-    <button onclick="startTimer()">Start</button>
-    <button onclick="pauseTimer()">Pause</button>
-    <button onclick="stopTimer()">Stop</button>
-    <button id="btnSet20"
-            style="background-color:#90A4AE;"
-            onclick="setTimeInput(20)">20m</button>
-    <button id="btnSet30"
-            style="background-color:#90A4AE;"
-            onclick="setTimeInput(30)">30m</button>
-    <input id="timeInput"
-           style="background-color:#90A4AE;"
-           type="number" min="1" max="59" value="10">
-  </div>
+      <div class="button-row">
+        <button onclick="startTimer()">Start</button>
+        <button onclick="pauseTimer()">Pause</button>
+        <button onclick="stopTimer()">Stop</button>
+        <button id="btnSet20"
+                style="background-color:#90A4AE;"
+                onclick="setTimeInput(20)">20m</button>
+        <button id="btnSet30"
+                style="background-color:#90A4AE;"
+                onclick="setTimeInput(30)">30m</button>
+        <input id="timeInput"
+               style="background-color:#90A4AE;"
+               type="number" min="1" max="59" value="20">
+      </div>
+    </div>
 
   <script>
     let duration = 0;
